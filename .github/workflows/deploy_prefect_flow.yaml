@@ -26,5 +26,4 @@ jobs:
           PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
         run: |
           pip install -r requirements.txt
-          prefect cloud login -k $PREFECT_API_KEY
           python create-deployment.py
