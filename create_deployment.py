@@ -18,8 +18,8 @@ def deploy_eodhd_pipeline():
         work_pool_name="data-pipeline-work-pool",
         job_variables={
             "env":
-                {"EODHD_API_KEY": eodhd_api_key},
-                {"MOTHER_DUCK_TOKEN": mother_duck_token}
+                "EODHD_API_KEY": eodhd_api_key,
+                "MOTHER_DUCK_TOKEN": mother_duck_token
         },
         cron="5 0 * * *",
     )
