@@ -19,12 +19,16 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Prefect Auth
+        uses: PrefectHQ/actions-prefect-auth@v1
+        with:
+          prefect-api-key: ${{ secrets.PREFECT_API_KEY }}
+          prefect-workspace: ${{ secrets.PREFECT_WORKSPACE }}
+
       - name: Prefect Deploy
         env:
           EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
           MOTHER_DUCK_TOKEN: ${{ secrets.MOTHER_DUCK_TOKEN }}
-          PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
-          PREFECT_API_URL: ${{ secrets.PREFECT_API_URL }}
         run: |
           pip install -r requirements.txt
           python create_deployment.py
