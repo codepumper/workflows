@@ -27,8 +27,9 @@ jobs:
           prefect-workspace: ${{ secrets.PREFECT_WORKSPACE }}
 
       - name: Prefect Deploy
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          MOTHER_DUCK_TOKEN: ${{ secrets.MOTHER_DUCK_TOKEN }}
         run: |
           pip install -r requirements.txt
-          echo "EODHD_API_KEY: $EODHD_API_KEY"
-          echo "MOTHER_DUCK_TOKEN: $MOTHER_DUCK_TOKEN"
           python create_deployment.py
