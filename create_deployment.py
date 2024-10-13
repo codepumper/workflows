@@ -1,14 +1,13 @@
 from prefect import flow
 
-# Source for the code to deploy (here, a GitHub repo)
 SOURCE_REPO="https://github.com/codepumper/workflows.git"
 
 if __name__ == "__main__":
     flow.from_source(
         source=SOURCE_REPO,
-        entrypoint="my_gh_workflow.py:repo_info", # Specific flow to run
+        entrypoint="eodhd_pipeline.py:run_eodhd_data_pipeline",
     ).deploy(
-        name="my-first-deployment",
-        work_pool_name="my-work-pool", # Work pool target
-        cron="0 1 * * *", # Cron schedule (1am every day)
+        name="eodhd_pipeline",
+        work_pool_name="data-pipeline-work-pool",
+        cron="5 0 * * *",
     )
