@@ -17,8 +17,7 @@ def deploy_eodhd_pipeline():
                 "MOTHER_DUCK_TOKEN": os.environ.get("MOTHER_DUCK_TOKEN")
             }
         },
-        cron="5 0 * * *",
-        timezone="America/New_York"
+        cron="5 5 * * *",
     )
 
 if __name__ == "__main__":
