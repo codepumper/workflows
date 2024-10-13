@@ -23,8 +23,8 @@ jobs:
         env:
           EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
           MOTHER_DUCK_TOKEN: ${{ secrets.MOTHER_DUCK_TOKEN }}
-          prefect-api-key: ${{ secrets.PREFECT_API_KEY }}
-          prefect-workspace: ${{ secrets.PREFECT_WORKSPACE }}
+          PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
+          PREFECT_WORKSPACE: ${{ secrets.PREFECT_WORKSPACE }}
         run: |
           pip install -r requirements.txt
           prefect cloud login --key $PREFECT_API_KEY --workspace $PREFECT_WORKSPACE
