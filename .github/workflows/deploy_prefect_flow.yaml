@@ -19,6 +19,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Print Environment Variables
+        run: |
+          echo "PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}"
+          echo "PREFECT_WORKSPACE: ${{ secrets.PREFECT_WORKSPACE }}"
+
       - name: Prefect Auth
         uses: PrefectHQ/actions-prefect-auth@v2
         with:
