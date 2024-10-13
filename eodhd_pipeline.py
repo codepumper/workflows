@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from prefect import flow, task
 from prefect.logging import get_run_logger
 from prefect.exceptions import PrefectException
+from prefect.blocks.system import Secret
 from time import sleep
 
 @task(retries=3, retry_delay_seconds=10)
@@ -105,15 +106,9 @@ def store_eod_data(con, data, symbol):
 @flow
 def run_eodhd_data_pipeline():
     logger = get_run_logger()
-    motherduck_token = os.getenv('MOTHER_DUCK_TOKEN')
-    if not motherduck_token:
-        logger.error("Error: MOTHER_DUCK_TOKEN environment variable is not set.")
-        return
-
-    api_token = os.getenv('EODHD_API_KEY')
-    if not api_token:
-        logger.error("Error: EODHD_API_KEY environment variable is not set.")
-        return
+    
+    api_token = Secret.load("eodhd-api-key").get()
+    motherduck_token = Secret.load("mother-duck-token").get()
 
     db_name = 'historical_stock_prices_raw'
     db_path = f"md:{db_name}?motherduck_token={motherduck_token}"

@@ -11,12 +11,12 @@ def create_secrets():
     mother_duck_token = os.environ.get("MOTHER_DUCK_TOKEN")
 
     if eodhd_api_key:
-        Secret(value=eodhd_api_key).save(name="EODHD_API_KEY", overwrite=True)
+        Secret(value=eodhd_api_key).save(name="eodhd-api-key", overwrite=True)
     else:
         raise ValueError("EODHD_API_KEY environment variable is not set.")
 
     if mother_duck_token:
-        Secret(value=mother_duck_token).save(name="MOTHER_DUCK_TOKEN", overwrite=True)
+        Secret(value=mother_duck_token).save(name="mother-duck-token", overwrite=True)
     else:
         raise ValueError("MOTHER_DUCK_TOKEN environment variable is not set.")
 
