@@ -22,8 +22,8 @@ jobs:
 
       - name: Print Environment Variables
         run: |
-          echo "PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}"
-          echo "PREFECT_WORKSPACE: ${{ secrets.PREFECT_WORKSPACE }}"
+          echo "EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}"
+          echo "MOTHER_DUCK_TOKEN: ${{ secrets.MOTHER_DUCK_TOKEN }}"
 
       - name: Prefect Auth
         uses: PrefectHQ/actions-prefect-auth@v2
