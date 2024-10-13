@@ -3,7 +3,8 @@ import os
 import duckdb
 import pandas as pd
 from datetime import datetime, timedelta
-from prefect import flow, task, get_run_logger
+from prefect import flow, task
+from prefect.logging import get_run_logger
 from prefect.exceptions import PrefectException
 from time import sleep
 
