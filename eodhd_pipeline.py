@@ -21,9 +21,9 @@ def fetch_eod_data(symbol, api_token):
         logger.info(f"Data fetched successfully for {symbol}")
         return data
     except requests.exceptions.RequestException as e:
-        raise PrefectException(f"Error fetching data for {symbol}: {e}")
+        logger.error(f"Error fetching data for {symbol}: {e}")
     except requests.exceptions.JSONDecodeError as e:
-        raise PrefectException(f"Error parsing JSON response for {symbol}: {e}")
+        logger.error(f"Error parsing JSON response for {symbol}: {e}")
 
 @task(retries=2, retry_delay_seconds=5)
 def validate_eod_data(data, required_fields):
@@ -37,7 +37,7 @@ def validate_eod_data(data, required_fields):
         logger.info("Data validation successful")
         return True
     except Exception as e:
-        raise PrefectException(f"Error validating data: {e}")
+        logger.error(f"Error validating data: {e}")
 
 @task
 def setup_eod_table(con):
@@ -64,7 +64,7 @@ def setup_eod_table(con):
         con.execute(create_table_query)
         logger.info("Table created or already exists")
     except Exception as e:
-        raise PrefectException(f"Error setting up table: {e}")
+        logger.error(f"Error setting up table: {e}")
 
 @task(retries=2, retry_delay_seconds=5)
 def store_eod_data(con, data, symbol):
@@ -99,7 +99,7 @@ def store_eod_data(con, data, symbol):
         con.executemany(insert_query, records)
         logger.info(f"Data inserted successfully for {symbol}")
     except Exception as e:
-        raise PrefectException(f"Error storing data for {symbol}: {e}")
+        logger.error(f"Error storing data for {symbol}: {e}")
 
 @flow
 def run_eodhd_data_pipeline():

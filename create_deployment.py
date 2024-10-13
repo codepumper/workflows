@@ -18,6 +18,7 @@ def deploy_eodhd_pipeline():
             }
         },
         cron="5 0 * * *",
+        timezone="America/New_York"
     )
 
 if __name__ == "__main__":
