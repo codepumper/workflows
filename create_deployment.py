@@ -32,6 +32,7 @@ def deploy_eodhd_pipeline():
     ).deploy(
         name="eodhd_pipeline",
         work_pool_name="data-pipeline-work-pool",
+        job_variables={"pip_packages": ["duckdb==1.1.1", "requests", "pandas", "prefect"]},
         cron="5 5 * * *",
     )
 
