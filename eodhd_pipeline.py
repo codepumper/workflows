@@ -12,9 +12,8 @@ from time import sleep
 @task(retries=3, retry_delay_seconds=10)
 def fetch_eod_data(symbol, api_token):
     logger = get_run_logger()
-    yesterday = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-    url = f'https://eodhd.com/api/eod/{symbol}?from={yesterday}&to={yesterday}&period=d&api_token={api_token}&fmt=json'
-    logger.info(f"Fetching data for {symbol} from {yesterday}")
+    today = datetime.today().strftime('%Y-%m-%d')
+    url = f'https://eodhd.com/api/eod/{symbol}?from={today}&to={today}&period=d&api_token={api_token}&fmt=json'
     
     try:
         response = requests.get(url)
