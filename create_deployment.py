@@ -6,19 +6,18 @@ SOURCE_REPO = "https://github.com/codepumper/workflows.git"
 
 @task
 def create_secrets():
-    # Create secrets in Prefect Cloud
-    eodhd_api_key = os.environ.get("EODHD_API_KEY")
-    mother_duck_token = os.environ.get("MOTHER_DUCK_TOKEN")
+    env_vars = {
+        "EODHD_API_KEY": "eodhd-api-key",
+        "MOTHER_DUCK_TOKEN": "mother-duck-token",
+        "POLYGON_API_KEY": "polygon-api-key"
+    }
 
-    if eodhd_api_key:
-        Secret(value=eodhd_api_key).save(name="eodhd-api-key", overwrite=True)
-    else:
-        raise ValueError("EODHD_API_KEY environment variable is not set.")
-
-    if mother_duck_token:
-        Secret(value=mother_duck_token).save(name="mother-duck-token", overwrite=True)
-    else:
-        raise ValueError("MOTHER_DUCK_TOKEN environment variable is not set.")
+    for env_var, secret_name in env_vars.items():
+        value = os.environ.get(env_var)
+        if value:
+            Secret(value=value).save(name=secret_name, overwrite=True)
+        else:
+            raise ValueError(f"{env_var} environment variable is not set.")
 
 
 @flow
