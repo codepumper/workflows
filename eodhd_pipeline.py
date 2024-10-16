@@ -26,19 +26,19 @@ def fetch_eod_data(symbol, api_token):
     except requests.exceptions.JSONDecodeError as e:
         logger.error(f"Error parsing JSON response for {symbol}: {e}")
 
-@task(retries=2, retry_delay_seconds=5)
-def validate_eod_data(data, required_fields):
-    logger = get_run_logger()
-    try:
-        for record in data:
-            for field in required_fields:
-                if field not in record:
-                    logger.error(f"Error: Missing required field '{field}' in record: {record}")
-                    return False
-        logger.info("Data validation successful")
-        return True
-    except Exception as e:
-        logger.error(f"Error validating data: {e}")
+# @task(retries=2, retry_delay_seconds=5)
+# def validate_eod_data(data, required_fields):
+#     logger = get_run_logger()
+#     try:
+#         for record in data:
+#             for field in required_fields:
+#                 if field not in record:
+#                     logger.error(f"Error: Missing required field '{field}' in record: {record}")
+#                     return False
+#         logger.info("Data validation successful")
+#         return True
+#     except Exception as e:
+#         logger.error(f"Error validating data: {e}")
 
 @task
 def setup_eod_table(con):
@@ -125,7 +125,7 @@ def run_eodhd_data_pipeline():
 
     for symbol in symbols:
         data = fetch_eod_data(symbol, api_token)
-        if data and validate_eod_data(data, required_fields):
+        if data:
             store_eod_data(con, data, symbol)
 
     logger.info("Data pipeline completed successfully")

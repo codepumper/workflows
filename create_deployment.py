@@ -22,7 +22,7 @@ def create_secrets():
 
 @flow
 def deploy_eodhd_pipeline():
-
+    
     create_secrets()
 
     flow.from_source(
@@ -32,6 +32,15 @@ def deploy_eodhd_pipeline():
         name="eodhd_pipeline",
         work_pool_name="data-pipeline-work-pool",
         job_variables={"pip_packages": ["duckdb==1.1.1", "requests", "pandas", "prefect"]},
+        cron="15 0 * * *",
+    )
+    flow.from_source(
+        source=SOURCE_REPO,
+        entrypoint="polygon_pipeline.py:run_polygon_data_pipeline",
+    ).deploy(
+        name="polygon_pipeline",
+        work_pool_name="data-pipeline-work-pool",
+        job_variables={"pip_packages": ["requests", "prefect"]},
         cron="15 0 * * *",
     )
 
