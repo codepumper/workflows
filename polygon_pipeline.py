@@ -19,7 +19,7 @@ def fetch_polygon_data(symbol, api_key):
         logger.error(f"Error parsing JSON response from Polygon API: {e}")
 
 @flow
-def run_eodhd_data_pipeline():
+def run_polygon_data_pipeline():
     logger = get_run_logger()
     api_key = Secret.load("polygon-api-key").get()
 
@@ -32,5 +32,5 @@ def run_eodhd_data_pipeline():
     print("Pipeline completed")
 
 if __name__ == "__main__":
-    run_eodhd_data_pipeline()
+    run_polygon_data_pipeline()
     
