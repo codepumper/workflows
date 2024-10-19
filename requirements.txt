@@ -3,3 +3,4 @@ duckdb
 pandas
 prefect
 sqlalchemy
+duckdb-engine
