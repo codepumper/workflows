@@ -1,5 +1,6 @@
-from prefect import flow, task, get_run_logger
+from prefect import flow, task
 from prefect.blocks.system import Secret
+import os
 
 SOURCE_REPO = "https://github.com/codepumper/workflows.git"
 
@@ -40,7 +41,7 @@ def deploy_eodhd_pipeline():
         work_pool_name="data-pipeline-work-pool",
         job_variables={"pip_packages": ["duckdb==1.1.1", "pandas", "sqlalchemy==2.0.35" "requests", "prefect", "duckdb-engine"]},
         cron="15 0 * * *",
-        image="robertk18/polygon-workflow:latest"
+        image="registry.digitalocean.com/workflow-registry/polygon-workflow:latest"
     )
 
 if __name__ == "__main__":
