@@ -4,32 +4,26 @@ from sqlalchemy.orm import sessionmaker
 from prefect import task
 from prefect.blocks.system import Secret
 
-def init_db():
-    # Load the secret token
+db_name = 'historical_stock_prices_raw'
+
+def get_connection_string():
+    """Load the secret token and create the connection string."""
     token = Secret.load("mother-duck-token").get()
-    
-    # Create the connection string
-    connection_string = f'duckdb:///md:{db_name}?motherduck_token={token}'
-    
-    # Create the engine
+    return f'duckdb:///md:{db_name}?motherduck_token={token}'
+
+def init_db():
+    """Initialize the database connection."""
+    connection_string = get_connection_string()
     engine = create_engine(connection_string)
-    
-    # Create the session
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    
-    # Create the base
     Base = declarative_base()
-    
     return engine, SessionLocal, Base
 
-def create_tables():
-    # from models.alpaca_bar_data import AlpacaBarData
+def create_tables(engine, Base):
+    """Create tables in the database."""
     from models.polygon_bar_data import PolygonBarData
-    # from models.eodhd_bar_data import EODHDBarData
-    # from models.yahoo_bar_data import YahooBarData
     from models.ticker import Ticker
     
-    engine, _, Base = init_db()
     Base.metadata.create_all(bind=engine)
 
 @task
@@ -45,3 +39,6 @@ def write_data_to_db(data):
         print(f"Error writing data to the database: {e}")
     finally:
         session.close()
+
+# Initialize the database
+engine, SessionLocal, Base = init_db()
