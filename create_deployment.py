@@ -19,7 +19,6 @@ def create_secrets():
         else:
             raise ValueError(f"{env_var} environment variable is not set.")
 
-
 @flow
 def deploy_eodhd_pipeline():
     
@@ -40,7 +39,7 @@ def deploy_eodhd_pipeline():
     ).deploy(
         name="polygon_pipeline",
         work_pool_name="data-pipeline-work-pool",
-        job_variables={"pip_packages": ["duckdb==1.1.1", "sqlalchemy==2.0.35" "requests", "prefect", "duckdb-engine", "asyncio"]},
+        job_variables={"pip_packages": ["duckdb==1.1.1", "pandas", "sqlalchemy==2.0.35" "requests", "prefect", "duckdb-engine"]},
         cron="15 0 * * *",
     )
 

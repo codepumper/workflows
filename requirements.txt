@@ -1,6 +1,6 @@
 requests
-duckdb
+duckdb==1.1.1
+sqlalchemy==2.0.35
 pandas
 prefect
-sqlalchemy
 duckdb-engine
