@@ -41,7 +41,7 @@ def deploy_eodhd_pipeline():
         work_pool_name="data-pipeline-work-pool",
         job_variables={"pip_packages": ["duckdb==1.1.1", "pandas", "sqlalchemy==2.0.35" "requests", "prefect", "duckdb-engine"]},
         cron="15 0 * * *",
-        image="registry.digitalocean.com/workflow-registry/polygon-workflow:latest"
+        image="prefecthq/prefect:3-python3.11"
     )
 
 if __name__ == "__main__":
