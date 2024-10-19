@@ -3,7 +3,7 @@ import requests
 from prefect import flow, task, get_run_logger
 from prefect.blocks.system import Secret
 from models.polygon_bar_data import PolygonBarData
-from common.db_layer import write_data_to_db, SessionLocal
+from common.db_layer import DatabaseLayer
 from models.ticker import Ticker
 
 def construct_polygon_url(symbol, api_key, adjusted=True):
@@ -32,7 +32,9 @@ def run_polygon_data_pipeline():
     logger = get_run_logger()
     api_key = Secret.load("polygon-api-key").get()
 
-    session = SessionLocal()
+    db = DatabaseLayer()
+
+    session = db.SessionLocal()
 
     symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
     symbols = [symbol[0] for symbol in symbols]  
@@ -63,7 +65,7 @@ def run_polygon_data_pipeline():
                 logger.info(f"Data for {symbol} on {bar_data.date} already exists. Skipping.")
                 continue
 
-            write_data_to_db(bar_data)
+            db.write_data_to_db(bar_data)
             new_data_added = True
             time_module.sleep(30)
         except Exception as e:
