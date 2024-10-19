@@ -6,6 +6,7 @@ from models.polygon_bar_data import PolygonBarData
 from common.db_layer import DatabaseLayer
 from models.ticker import Ticker
 
+@task
 def construct_polygon_url(symbol, api_key, adjusted=True):
     base_url = 'https://api.polygon.io/v2/aggs/ticker'
     adjusted_param = 'true' if adjusted else 'false'

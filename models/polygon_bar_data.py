@@ -10,7 +10,7 @@ class PolygonBarData(BarData):
     ticker = relationship("Ticker", back_populates="polygon_bars")
 
     @classmethod
-    def from_polygon_response(cls, data: dict):
+    def from_polygon_response(cls, data: dict) -> "PolygonBarData":
         """Create an instance from the Polygon response structure"""
         result = data["results"][0]
         date_value = datetime.fromtimestamp(result["t"] / 1000, tz=timezone.utc).date()

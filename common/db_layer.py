@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from prefect import task
 from prefect.blocks.system import Secret
 
 class DatabaseLayer:
@@ -22,14 +21,13 @@ class DatabaseLayer:
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         return engine, SessionLocal
 
-    def create_tables(self):
-        """Create tables in the database."""
-        from models.polygon_bar_data import PolygonBarData
-        from models.ticker import Ticker
+    # def create_tables(self):
+    #     """Create tables in the database."""
+    #     from models.polygon_bar_data import PolygonBarData
+    #     from models.ticker import Ticker
 
-        self.Base.metadata.create_all(bind=self.engine)
+    #     self.Base.metadata.create_all(bind=self.engine)
 
-    @task
     def write_data_to_db(self, data):
         """High-level function to write data into the database."""
         session = self.SessionLocal()
