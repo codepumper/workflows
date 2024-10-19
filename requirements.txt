@@ -1,4 +1,0 @@
-requests
-duckdb
-pandas
-prefect

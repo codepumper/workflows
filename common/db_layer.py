@@ -9,18 +9,19 @@ db_name = 'historical_stock_prices_raw'
 
 async def get_connection_string():
     """Load the secret token and create the connection string."""
-    token = await Secret.load("mother-duck-token").get()
+    secret_block = await Secret.load("mother-duck-token")
+    token = secret_block.get()
     return f'duckdb:///md:{db_name}?motherduck_token={token}'
 
 async def init_db():
     """Initialize the database connection."""
-    connection_string = get_connection_string()
+    connection_string = await get_connection_string()
     engine = create_engine(connection_string)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base = declarative_base()
     return engine, SessionLocal, Base
 
-async def create_tables(engine, Base):
+def create_tables(engine, Base):
     """Create tables in the database."""
     from models.polygon_bar_data import PolygonBarData
     from models.ticker import Ticker
