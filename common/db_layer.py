@@ -3,15 +3,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from prefect import task
 from prefect.blocks.system import Secret
+import asyncio
 
 db_name = 'historical_stock_prices_raw'
 
-def get_connection_string():
+async def get_connection_string():
     """Load the secret token and create the connection string."""
-    token = Secret.load("mother-duck-token").get()
+    token = await Secret.load("mother-duck-token").get()
     return f'duckdb:///md:{db_name}?motherduck_token={token}'
 
-def init_db():
+async def init_db():
     """Initialize the database connection."""
     connection_string = get_connection_string()
     engine = create_engine(connection_string)
@@ -19,7 +20,7 @@ def init_db():
     Base = declarative_base()
     return engine, SessionLocal, Base
 
-def create_tables(engine, Base):
+async def create_tables(engine, Base):
     """Create tables in the database."""
     from models.polygon_bar_data import PolygonBarData
     from models.ticker import Ticker
@@ -41,4 +42,4 @@ def write_data_to_db(data):
         session.close()
 
 # Initialize the database
-engine, SessionLocal, Base = init_db()
+engine, SessionLocal, Base = asyncio.run(init_db())
