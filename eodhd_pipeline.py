@@ -12,8 +12,8 @@ from time import sleep
 @task(retries=3, retry_delay_seconds=10)
 def fetch_eod_data(symbol, api_token):
     logger = get_run_logger()
-    today = datetime.today().strftime('%Y-%m-%d')
-    url = f'https://eodhd.com/api/eod/{symbol}?from={today}&to={today}&period=d&api_token={api_token}&fmt=json'
+    yesterday = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+    url = f'https://eodhd.com/api/eod/{symbol}?from={yesterday}&to={yesterday}&period=d&api_token={api_token}&fmt=json'
     
     try:
         response = requests.get(url)
@@ -113,7 +113,6 @@ def run_eodhd_data_pipeline():
     db_path = f"md:{db_name}?motherduck_token={motherduck_token}"
 
     symbols = ['AAPL.US']
-    required_fields = ['date', 'open', 'high', 'low', 'close', 'adjusted_close', 'volume']
 
     try:
         con = duckdb.connect(db_path)
