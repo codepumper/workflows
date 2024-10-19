@@ -27,55 +27,61 @@ def fetch_polygon_data(symbol, api_key, adjusted=False):
     except requests.exceptions.JSONDecodeError as e:
         logger.error(f"Error parsing JSON response from Polygon API: {e}")
 
-@flow
+@flow(name="polygon_flow", log_prints=True)
 def run_polygon_data_pipeline():
-    logger = get_run_logger()
-    api_key = Secret.load("polygon-api-key").get()
+    try:
+        logger = get_run_logger()
+        api_key = Secret.load("polygon-api-key").get()
 
-    db = DatabaseLayer()
+        db = DatabaseLayer()
 
-    session = db.SessionLocal()
+        session = db.SessionLocal()
 
-    symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
-    symbols = [symbol[0] for symbol in symbols]  
+        symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
+        symbols = [symbol[0] for symbol in symbols]  
 
-    new_data_added = False
+        new_data_added = False
 
-    for symbol in symbols:
-        try:
-            not_adjusted_data = fetch_polygon_data(symbol, api_key)
-            adjusted = fetch_polygon_data(symbol, api_key, adjusted=True)
+        for symbol in symbols:
+            try:
+                not_adjusted_data = fetch_polygon_data(symbol, api_key)
+                adjusted = fetch_polygon_data(symbol, api_key, adjusted=True)
 
-            if not not_adjusted_data or not adjusted:
-                logger.warning(f"No data returned for symbol: {symbol}")
-                continue
+                if not not_adjusted_data or not adjusted:
+                    logger.warning(f"No data returned for symbol: {symbol}")
+                    continue
 
-            not_adjusted_data['results'][0]['ac'] = adjusted['results'][0]['c']
+                not_adjusted_data['results'][0]['ac'] = adjusted['results'][0]['c']
 
-            ticker = session.query(Ticker).filter_by(polygon_symbol=symbol).first()
-            if not ticker:
-                logger.warning(f"No ticker found for symbol: {symbol}")
-                continue
+                ticker = session.query(Ticker).filter_by(polygon_symbol=symbol).first()
+                if not ticker:
+                    logger.warning(f"No ticker found for symbol: {symbol}")
+                    continue
 
-            not_adjusted_data['results'][0]['T'] = ticker.id
+                not_adjusted_data['results'][0]['T'] = ticker.id
 
-            bar_data = PolygonBarData.from_polygon_response(not_adjusted_data)
-            existing_data = session.query(PolygonBarData).filter_by(ticker_id=bar_data.ticker_id, date=bar_data.date).first()
-            if existing_data:
-                logger.info(f"Data for {symbol} on {bar_data.date} already exists. Skipping.")
-                continue
+                bar_data = PolygonBarData.from_polygon_response(not_adjusted_data)
+                existing_data = session.query(PolygonBarData).filter_by(ticker_id=bar_data.ticker_id, date=bar_data.date).first()
+                if existing_data:
+                    logger.info(f"Data for {symbol} on {bar_data.date} already exists. Skipping.")
+                    continue
 
-            db.write_data_to_db(bar_data)
-            new_data_added = True
-            time_module.sleep(30)
-        except Exception as e:
-            logger.error(f"Error processing data for symbol: {symbol}. Error: {e}")
+                db.write_data_to_db(bar_data)
+                new_data_added = True
+                time_module.sleep(30)
+            except Exception as e:
+                logger.error(f"Error processing data for symbol: {symbol}. Error: {e}")
 
-    if not new_data_added:
-        logger.warning("No new data was added to the database.")
-        raise Exception("Pipeline did not add any new data.")
 
-    logger.info("Pipeline completed successfully.")
+        if not new_data_added:
+            logger.warning("No new data was added to the database.")
+            raise Exception("Pipeline did not add any new data.")
+
+        logger.info("Pipeline completed successfully.")
+    except Exception as e:
+
+        logger.error(f"Error running polygon data pipeline: {e}")
+        raise e
 
 
 if __name__ == "__main__":
