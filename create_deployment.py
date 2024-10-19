@@ -1,6 +1,5 @@
-from prefect import flow, task
+from prefect import flow, task, get_run_logger
 from prefect.blocks.system import Secret
-import os
 
 SOURCE_REPO = "https://github.com/codepumper/workflows.git"
 
@@ -18,21 +17,21 @@ def create_secrets():
             Secret(value=value).save(name=secret_name, overwrite=True)
         else:
             raise ValueError(f"{env_var} environment variable is not set.")
-
+        
 @flow
 def deploy_eodhd_pipeline():
     
     create_secrets()
 
-    flow.from_source(
-        source=SOURCE_REPO,
-        entrypoint="eodhd_pipeline.py:run_eodhd_data_pipeline",
-    ).deploy(
-        name="eodhd_pipeline",
-        work_pool_name="data-pipeline-work-pool",
-        job_variables={"pip_packages": ["duckdb==1.1.1", "requests", "pandas", "prefect"]},
-        cron="15 0 * * *",
-    )
+    # flow.from_source(
+    #     source=SOURCE_REPO,
+    #     entrypoint="eodhd_pipeline.py:run_eodhd_data_pipeline",
+    # ).deploy(
+    #     name="eodhd_pipeline",
+    #     work_pool_name="data-pipeline-work-pool",
+    #     job_variables={"pip_packages": ["duckdb==1.1.1", "requests", "pandas", "prefect"]},
+    #     cron="15 0 * * *",
+    # )
     flow.from_source(
         source=SOURCE_REPO,
         entrypoint="polygon_pipeline.py:run_polygon_data_pipeline",
@@ -41,6 +40,7 @@ def deploy_eodhd_pipeline():
         work_pool_name="data-pipeline-work-pool",
         job_variables={"pip_packages": ["duckdb==1.1.1", "pandas", "sqlalchemy==2.0.35" "requests", "prefect", "duckdb-engine"]},
         cron="15 0 * * *",
+        image="robertk18/polygon-workflow:latest"
     )
 
 if __name__ == "__main__":
