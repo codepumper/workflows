@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from prefect import task, Secret
+from prefect import task
+from prefect.blocks.system import Secret
 
 # TODO  - refactor this file
 db_name = 'historical_stock_prices_raw'
