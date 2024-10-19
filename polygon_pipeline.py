@@ -3,7 +3,7 @@ import requests
 from prefect import flow, task, get_run_logger
 from prefect.blocks.system import Secret
 from models.polygon_bar_data import PolygonBarData
-from common.db_layer import write_data_to_db, SessionLocal
+from common.db_layer import init_db, write_data_to_db, SessionLocal
 from models.ticker import Ticker
 
 def construct_polygon_url(symbol, api_key, adjusted=True):
@@ -31,6 +31,8 @@ def fetch_polygon_data(symbol, api_key, adjusted=False):
 def run_polygon_data_pipeline():
     logger = get_run_logger()
     api_key = Secret.load("polygon-api-key").get()
+
+    _, SessionLocal, _ = init_db()
 
     session = SessionLocal()
 

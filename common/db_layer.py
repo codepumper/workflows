@@ -4,17 +4,23 @@ from sqlalchemy.orm import sessionmaker
 from prefect import task
 from prefect.blocks.system import Secret
 
-# TODO  - refactor this file
-db_name = 'historical_stock_prices_raw'
-
-token = Secret.load("mother-duck-token").get()
-connection_string = f'duckdb:///md:{db_name}?motherduck_token={token}'
-
-engine = create_engine(connection_string)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
+def init_db():
+    # Load the secret token
+    token = Secret.load("mother-duck-token").get()
+    
+    # Create the connection string
+    connection_string = f'duckdb:///md:{db_name}?motherduck_token={token}'
+    
+    # Create the engine
+    engine = create_engine(connection_string)
+    
+    # Create the session
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    # Create the base
+    Base = declarative_base()
+    
+    return engine, SessionLocal, Base
 
 def create_tables():
     # from models.alpaca_bar_data import AlpacaBarData
@@ -23,6 +29,7 @@ def create_tables():
     # from models.yahoo_bar_data import YahooBarData
     from models.ticker import Ticker
     
+    engine, _, Base = init_db()
     Base.metadata.create_all(bind=engine)
 
 @task
