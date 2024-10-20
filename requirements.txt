@@ -1,7 +1,4 @@
 requests
-prefect==2.17.1
-prefect-duckdb==0.1.0a1
-sqlalchemy==2.0.35
+sqlalchemy
 pandas
-prefect==2.17.1
-duckdb-engine
+prefect
