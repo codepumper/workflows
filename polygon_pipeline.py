@@ -53,12 +53,12 @@ def run_polygon_data_pipeline():
 
             not_adjusted_data['results'][0]['ac'] = adjusted['results'][0]['c']
 
-            # ticker = session.query(Ticker).filter_by(polygon_symbol=symbol).first()
-            # if not ticker:
-            #     logger.warning(f"No ticker found for symbol: {symbol}")
-            #     continue
+            ticker = session.query(Ticker).filter_by(polygon_symbol=symbol).first()
+            if not ticker:
+                logger.warning(f"No ticker found for symbol: {symbol}")
+                continue
 
-            #not_adjusted_data['results'][0]['T'] = ticker.id
+            not_adjusted_data['results'][0]['T'] = ticker.id
 
             bar_data = PolygonBarData.from_polygon_response(not_adjusted_data)
             existing_data = session.query(PolygonBarData).filter_by(ticker_id=bar_data.ticker_id, date=bar_data.date).first()
