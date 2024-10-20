@@ -40,10 +40,6 @@ def run_polygon_data_pipeline():
     symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
     symbols = [symbol[0] for symbol in symbols]  
 
-    logger.info(f">>> Fetching data for symbols: {symbols}")
-
-    symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
-
     new_data_added = False
 
     for symbol in symbols:
@@ -62,15 +58,15 @@ def run_polygon_data_pipeline():
             #     logger.warning(f"No ticker found for symbol: {symbol}")
             #     continue
 
-            not_adjusted_data['results'][0]['T'] = ticker.id
+            #not_adjusted_data['results'][0]['T'] = ticker.id
 
-            # bar_data = PolygonBarData.from_polygon_response(not_adjusted_data)
-            # existing_data = session.query(PolygonBarData).filter_by(ticker_id=bar_data.ticker_id, date=bar_data.date).first()
-            # if existing_data:
-            #     logger.info(f"Data for {symbol} on {bar_data.date} already exists. Skipping.")
-            #     continue
+            bar_data = PolygonBarData.from_polygon_response(not_adjusted_data)
+            existing_data = session.query(PolygonBarData).filter_by(ticker_id=bar_data.ticker_id, date=bar_data.date).first()
+            if existing_data:
+                logger.info(f"Data for {symbol} on {bar_data.date} already exists. Skipping.")
+                continue
 
-            # db.write_data_to_db(bar_data)
+            db.write_data_to_db(bar_data)
             logger.info(f"Data added to the database for symbol: {not_adjusted_data}")
             new_data_added = True
             time_module.sleep(30)
