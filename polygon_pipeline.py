@@ -35,10 +35,12 @@ def run_polygon_data_pipeline():
 
     db = DatabaseLayer()
 
-    # session = db.SessionLocal()
+    session = db.SessionLocal()
 
-    # symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
-    # symbols = [symbol[0] for symbol in symbols]  
+    symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
+    symbols = [symbol[0] for symbol in symbols]  
+
+    logger.info(f">>> Fetching data for symbols: {symbols}")
 
     symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
 
