@@ -2,9 +2,9 @@ import time as time_module
 import requests
 from prefect import flow, task, get_run_logger
 from prefect.blocks.system import Secret
-# from models.polygon_bar_data import PolygonBarData
-# from common.db_layer import DatabaseLayer
-# from models.ticker import Ticker
+from models.polygon_bar_data import PolygonBarData
+from common.db_layer import DatabaseLayer
+from models.ticker import Ticker
 
 @task
 def construct_polygon_url(symbol, api_key, adjusted=True):
@@ -33,7 +33,7 @@ def run_polygon_data_pipeline():
     logger = get_run_logger()
     api_key = Secret.load("polygon-api-key").get()
 
-    # db = DatabaseLayer()
+    db = DatabaseLayer()
 
     # session = db.SessionLocal()
 
