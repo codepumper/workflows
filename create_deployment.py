@@ -33,13 +33,24 @@ def deploy_eodhd_pipeline():
     #     job_variables={"pip_packages": ["duckdb==1.1.1", "requests", "pandas", "prefect"]},
     #     cron="15 0 * * *",
     # )
+    # flow.from_source(
+    #     source=SOURCE_REPO,
+    #     entrypoint="test_workflow.py:run_polygon_data_pipeline",
+    # ).deploy(
+    #     name="test_pipeline",
+    #     work_pool_name="data-pipeline-work-pool",
+    #     job_variables={"pip_packages": ["duckdb==1.1.1", "pandas", "requests", "prefect", "duckdb-engine"]},
+    #     cron="15 0 * * *",
+    # )
     flow.from_source(
         source=SOURCE_REPO,
-        entrypoint="polygon_pipeline.py:run_polygon_data_pipeline",
+        entrypoint="test_workflow.py:run_polygon_data_pipeline",
     ).deploy(
-        name="polygon_pipeline",
+        name="test_pipeline",
         work_pool_name="data-pipeline-work-pool",
-        job_variables={"pip_packages": ["duckdb==1.1.1", "pandas", "sqlalchemy==2.0.35" "requests", "prefect", "duckdb-engine"]},
+        # job_variables={"pip_packages": ["prefect==2.17.1", "prefect-duckdb==0.1.0a1"]},
+        job_variables={"pip_packages": ["prefect==3.0.0", "prefect-duckdb==0.1.0a1"]},
+       
         cron="15 0 * * *",
     )
 
