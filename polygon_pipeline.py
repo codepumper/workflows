@@ -1,4 +1,4 @@
-#import time as time_module
+import time as time_module
 import requests
 from prefect import flow, task, get_run_logger
 from prefect.blocks.system import Secret
@@ -71,7 +71,7 @@ def run_polygon_data_pipeline():
             # db.write_data_to_db(bar_data)
             logger.info(f"Data added to the database for symbol: {not_adjusted_data}")
             new_data_added = True
-            #time_module.sleep(30)
+            time_module.sleep(30)
         except Exception as e:
             logger.error(f"Error processing data for symbol: {symbol}. Error: {e}")
 
