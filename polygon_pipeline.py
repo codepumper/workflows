@@ -1,10 +1,10 @@
-import time as time_module
+#import time as time_module
 import requests
 from prefect import flow, task, get_run_logger
 from prefect.blocks.system import Secret
-from models.polygon_bar_data import PolygonBarData
-from common.db_layer import DatabaseLayer
-from models.ticker import Ticker
+# from models.polygon_bar_data import PolygonBarData
+# from common.db_layer import DatabaseLayer
+# from models.ticker import Ticker
 
 @task
 def construct_polygon_url(symbol, api_key, adjusted=True):
@@ -33,12 +33,14 @@ def run_polygon_data_pipeline():
     logger = get_run_logger()
     api_key = Secret.load("polygon-api-key").get()
 
-    db = DatabaseLayer()
+    # db = DatabaseLayer()
 
-    session = db.SessionLocal()
+    # session = db.SessionLocal()
 
-    symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
-    symbols = [symbol[0] for symbol in symbols]  
+    # symbols = session.query(Ticker.polygon_symbol).filter(Ticker.polygon_symbol.isnot(None)).all()
+    # symbols = [symbol[0] for symbol in symbols]  
+
+    symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
 
     new_data_added = False
 
@@ -53,22 +55,23 @@ def run_polygon_data_pipeline():
 
             not_adjusted_data['results'][0]['ac'] = adjusted['results'][0]['c']
 
-            ticker = session.query(Ticker).filter_by(polygon_symbol=symbol).first()
-            if not ticker:
-                logger.warning(f"No ticker found for symbol: {symbol}")
-                continue
+            # ticker = session.query(Ticker).filter_by(polygon_symbol=symbol).first()
+            # if not ticker:
+            #     logger.warning(f"No ticker found for symbol: {symbol}")
+            #     continue
 
             not_adjusted_data['results'][0]['T'] = ticker.id
 
-            bar_data = PolygonBarData.from_polygon_response(not_adjusted_data)
-            existing_data = session.query(PolygonBarData).filter_by(ticker_id=bar_data.ticker_id, date=bar_data.date).first()
-            if existing_data:
-                logger.info(f"Data for {symbol} on {bar_data.date} already exists. Skipping.")
-                continue
+            # bar_data = PolygonBarData.from_polygon_response(not_adjusted_data)
+            # existing_data = session.query(PolygonBarData).filter_by(ticker_id=bar_data.ticker_id, date=bar_data.date).first()
+            # if existing_data:
+            #     logger.info(f"Data for {symbol} on {bar_data.date} already exists. Skipping.")
+            #     continue
 
-            db.write_data_to_db(bar_data)
+            # db.write_data_to_db(bar_data)
+            logger.info(f"Data added to the database for symbol: {not_adjusted_data}")
             new_data_added = True
-            time_module.sleep(30)
+            #time_module.sleep(30)
         except Exception as e:
             logger.error(f"Error processing data for symbol: {symbol}. Error: {e}")
 
