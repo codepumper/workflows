@@ -44,7 +44,7 @@ def deploy_eodhd_pipeline():
     ).deploy(
         name="polygon_pipeline",
         work_pool_name="data-pipeline-work-pool",
-        job_variables={"pip_packages": ["sqlalchemy" "requests", "prefect"]},
+        job_variables={"pip_packages": ["requests", "prefect"]},
         cron="15 0 * * *"
     )
 
